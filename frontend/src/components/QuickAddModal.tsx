@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useCart } from "@/context/CartContext";
+import { trackAddToCart } from "@/lib/meta-pixel";
 
 interface QuickAddModalProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,6 +55,7 @@ export default function QuickAddModal({ product, onClose }: QuickAddModalProps) 
   }, [selectedColor, colors, images, product.image_url]);
 
   const handleConfirm = useCallback(() => {
+    trackAddToCart();
     addToCart({
       ...product,
       color: selectedColor,

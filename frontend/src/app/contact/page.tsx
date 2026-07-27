@@ -1,3 +1,7 @@
+"use client";
+
+import { trackContact } from "@/lib/meta-pixel";
+
 export default function ContactPage() {
   const WHATSAPP_NUMBER = "8801516501537";
   const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}`;
@@ -63,6 +67,7 @@ export default function ContactPage() {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackContact()}
               className="btn-luxury inline-flex items-center gap-3 bg-green-600 text-white px-10 py-4 rounded-sm text-[11px] font-semibold tracking-[0.15em] uppercase hover:bg-green-700 transition-all duration-300"
             >
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">

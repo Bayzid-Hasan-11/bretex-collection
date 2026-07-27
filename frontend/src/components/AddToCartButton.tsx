@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
+import { trackAddToCart } from "@/lib/meta-pixel";
 
 export default function AddToCartButton({ product }: { product: any }) {
   const { addToCart } = useCart();
@@ -41,6 +42,7 @@ export default function AddToCartButton({ product }: { product: any }) {
   }, [selectedColor, colors, images]);
 
   const handleAddToCart = () => {
+    trackAddToCart();
     addToCart({ ...product, color: selectedColor, size: selectedSize, image_url: currentImage });
   };
 

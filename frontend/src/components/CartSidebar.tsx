@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
+import { trackInitiateCheckout, trackContact, sendCAPIEvent } from "@/lib/meta-pixel";
 
 export default function CartSidebar() {
   const { cart, isCartOpen, setIsCartOpen, removeFromCart, cartTotal, clearCart } = useCart();
@@ -56,6 +57,11 @@ export default function CartSidebar() {
       .join("\n\n");
     const deliveryText = formData.deliveryArea === "inside" ? "Inside Dhaka (৳70)" : "Outside Dhaka (৳130)";
     const message = `*Customer Details:*\nName: ${formData.name}\nPhone: ${formData.phone}\nAddress: ${formData.address}\nDistrict: ${formData.district}\nDivision: ${formData.division}\nDelivery: ${deliveryText}\n\n*Order Items:*\n${itemsText}\n\nSubtotal: ৳${cartTotal.toFixed(2)}\nDelivery Charge: ৳${deliveryCharge.toFixed(2)}\n*Total Amount:* ৳${finalTotal.toFixed(2)}\n\nPlease confirm my order!`;
+
+    // Fire Contact pixel + CAPI before redirect
+    trackContact();
+    sendCAPIEvent("Contact", { phone: formData.phone });
+
     window.open(`https://wa.me/${BUSINESS_PHONE_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
     clearCart();
     setIsCheckout(false);
@@ -219,7 +225,11 @@ export default function CartSidebar() {
             )}
 
             {!isCheckout ? (
-              <button onClick={() => setIsCheckout(true)} className="btn-luxury w-full bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 py-4 rounded-sm text-[12px] font-semibold tracking-[0.15em] uppercase hover:bg-accent dark:hover:bg-accent hover:text-white transition-all duration-300">
+              <button onClick={() => {
+                trackInitiateCheckout();
+                sendCAPIEvent("InitiateCheckout");
+                setIsCheckout(true);
+              }} className="btn-luxury w-full bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 py-4 rounded-sm text-[12px] font-semibold tracking-[0.15em] uppercase hover:bg-accent dark:hover:bg-accent hover:text-white transition-all duration-300">
                 Proceed to Checkout
               </button>
             ) : (
