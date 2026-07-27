@@ -25,7 +25,7 @@ interface CartContextType {
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
   addToCart: (product: Product) => void;
-  removeFromCart: (productId: number) => void;
+  removeFromCart: (productId: number, color?: string | null, size?: string | null) => void;
   cartTotal: number;
   clearCart: () => void;
 
@@ -68,8 +68,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setIsCartOpen(true);
   };
 
-  const removeFromCart = (productId: number) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+  const removeFromCart = (productId: number, color?: string | null, size?: string | null) => {
+    setCart((prevCart) =>
+      prevCart.filter(
+        (item) =>
+          !(
+            item.id === productId &&
+            item.color === (color ?? item.color) &&
+            item.size === (size ?? item.size)
+          ),
+      ),
+    );
   };
 
   const clearCart = () => setCart([]);

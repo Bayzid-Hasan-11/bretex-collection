@@ -16,10 +16,8 @@ export default async function ProductPage({
   }
 
   return (
-    <main className="bg-white">
-      {/* The flex container splits the child elements perfectly 50/50 */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-16 flex flex-col md:flex-row gap-8 sm:gap-16">
-        {/* The AddToCartButton component contains both the image half and the details half */}
+    <main className="bg-white dark:bg-zinc-950 transition-colors">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-10 sm:py-20 flex flex-col md:flex-row gap-10 sm:gap-16 lg:gap-20">
         <AddToCartButton product={product as any} />
       </div>
     </main>
