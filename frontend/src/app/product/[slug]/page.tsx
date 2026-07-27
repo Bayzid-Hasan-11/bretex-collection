@@ -3,9 +3,12 @@ import AddToCartButton from "@/components/AddToCartButton";
 import { Product } from "@/context/CartContext";
 
 async function getProduct(slug: string): Promise<Product> {
-  const res = await fetch(`http://127.0.0.1:8000/api/products/${slug}/`, {
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `https://bretex-collection.onrender.com/api/products/${slug}/`,
+    {
+      cache: "no-store",
+    },
+  );
   if (!res.ok) return notFound();
   return res.json();
 }
