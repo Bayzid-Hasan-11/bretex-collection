@@ -1,29 +1,39 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useCart, Product } from "@/context/CartContext";
+import { useCart } from "@/context/CartContext";
 
-export default function AddToCartButton({ product }: { product: Product }) {
+// Changed type to 'any' to prevent TypeScript errors with our new static data structure
+export default function AddToCartButton({ product }: { product: any }) {
   const { addToCart } = useCart();
 
-  const colors = product.color
-    ? product.color
-        .split(",")
-        .map((c) => c.trim())
-        .filter(Boolean)
-    : [];
-  const sizes = product.size
-    ? product.size
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
-    : [];
-  const images = product.image_url
-    ? product.image_url
-        .split(",")
-        .map((i) => i.trim())
-        .filter(Boolean)
-    : [];
+  // Safely handle both the new static arrays and the old comma-separated strings
+  const colors = Array.isArray(product.colors)
+    ? product.colors
+    : product.color
+      ? product.color
+          .split(",")
+          .map((c: string) => c.trim())
+          .filter(Boolean)
+      : [];
+
+  const sizes = Array.isArray(product.sizes)
+    ? product.sizes
+    : product.size
+      ? product.size
+          .split(",")
+          .map((s: string) => s.trim())
+          .filter(Boolean)
+      : [];
+
+  const images = Array.isArray(product.images)
+    ? product.images
+    : product.image_url
+      ? product.image_url
+          .split(",")
+          .map((i: string) => i.trim())
+          .filter(Boolean)
+      : [];
 
   const [selectedColor, setSelectedColor] = useState(
     colors.length > 0 ? colors[0] : null,
@@ -85,13 +95,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
           </span>
         </div>
 
-        <div className="mb-2 md:mb-4">
-          <span
-            className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${product.stock > 0 ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}
-          >
-            {product.stock > 0 ? `${product.stock} in stock` : "Out of Stock"}
-          </span>
-        </div>
+        {/* STOCK BADGE HAS BEEN COMPLETELY REMOVED */}
 
         {colors.length > 0 && (
           <div>
@@ -99,7 +103,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
               Color
             </h3>
             <div className="flex flex-wrap gap-2 md:gap-3">
-              {colors.map((color) => (
+              {colors.map((color: string) => (
                 <button
                   key={color}
                   onClick={() => setSelectedColor(color)}
@@ -131,7 +135,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
             </div>
 
             <div className="flex flex-wrap gap-2 md:gap-3">
-              {sizes.map((size) => (
+              {sizes.map((size: string) => (
                 <button
                   key={size}
                   onClick={() => setSelectedSize(size)}
@@ -159,16 +163,12 @@ export default function AddToCartButton({ product }: { product: Product }) {
           </div>
         )}
 
+        {/* ADD TO CART BUTTON IS NOW ALWAYS ACTIVE */}
         <button
           onClick={handleAddToCart}
-          className={`w-full rounded-xl px-8 py-3.5 md:py-4 text-base md:text-lg font-bold text-white shadow-sm transition-colors mt-2 md:mt-4 ${
-            product.stock > 0
-              ? "bg-black hover:bg-gray-800"
-              : "bg-gray-400 cursor-not-allowed"
-          }`}
-          disabled={product.stock === 0}
+          className="w-full rounded-xl px-8 py-3.5 md:py-4 text-base md:text-lg font-bold text-white shadow-sm transition-colors mt-2 md:mt-4 bg-black hover:bg-gray-800"
         >
-          {product.stock > 0 ? "Add to Cart" : "Notify Me When Available"}
+          Add to Cart
         </button>
       </div>
 
