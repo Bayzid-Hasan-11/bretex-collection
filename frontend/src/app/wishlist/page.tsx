@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import PriceDisplay from "@/components/PriceDisplay";
 
 export default function WishlistPage() {
   const { wishlist, addToCart, toggleWishlist, clearWishlist } = useCart();
@@ -65,7 +66,7 @@ export default function WishlistPage() {
                     </Link>
                   </div>
                   <div className="mt-5 pt-5 border-t border-gray-100/60 dark:border-zinc-800/40 flex items-center justify-between">
-                    <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-zinc-100">৳{product.price}</span>
+                    <PriceDisplay price={product.price} originalPrice={product.originalPrice} discountPercent={product.discountPercent} />
                     <button onClick={() => addToCart(product)} className={`btn-luxury px-6 py-2.5 text-[11px] font-semibold tracking-[0.12em] uppercase transition-all duration-300 ${product.stock > 0 ? "text-white bg-gray-900 dark:bg-zinc-100 dark:text-zinc-900 hover:bg-accent dark:hover:bg-accent hover:text-white" : "bg-gray-200 dark:bg-zinc-700 text-gray-500 dark:text-zinc-400 cursor-not-allowed"}`} disabled={product.stock === 0}>
                       {product.stock > 0 ? "Add to Bag" : "Notify Me"}
                     </button>

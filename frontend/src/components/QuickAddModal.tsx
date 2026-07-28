@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useCart } from "@/context/CartContext";
 import { trackAddToCart } from "@/lib/meta-pixel";
+import PriceDisplay from "@/components/PriceDisplay";
 
 interface QuickAddModalProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,9 +112,9 @@ export default function QuickAddModal({ product, onClose }: QuickAddModalProps) 
             <h2 className="text-lg font-bold tracking-tight text-gray-900 dark:text-zinc-50 leading-snug mb-1">
               {product.name}
             </h2>
-            <p className="text-lg font-light tracking-tight text-gray-500 dark:text-zinc-400 mb-6">
-              ৳{product.price}
-            </p>
+            <div className="mb-6">
+              <PriceDisplay price={product.price} originalPrice={product.originalPrice} discountPercent={product.discountPercent} size="md" />
+            </div>
 
             {colors.length > 0 && (
               <div className="mb-5">

@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { trackInitiateCheckout, trackContact, sendCAPIEvent } from "@/lib/meta-pixel";
+import PriceDisplay from "@/components/PriceDisplay";
+import { formatPrice } from "@/lib/utils";
 
 export default function CartSidebar() {
-  const { cart, isCartOpen, setIsCartOpen, removeFromCart, cartTotal, clearCart } = useCart();
+  const { cart, isCartOpen, setIsCartOpen, removeFromCart, updateQuantity, cartTotal, clearCart } = useCart();
 
   const [isCheckout, setIsCheckout] = useState(false);
   const [formData, setFormData] = useState({
@@ -52,7 +54,8 @@ export default function CartSidebar() {
       .map((item, index) => {
         const colorText = item.color ? `Color: ${item.color} | ` : "";
         const sizeText = item.size ? `Size: ${item.size}` : "";
-        return `${index + 1}. *${item.name}*\n   ${colorText}${sizeText}\n   Qty: ${item.quantity} x ৳${item.price} = ৳${(parseFloat(item.price) * item.quantity).toFixed(2)}`;
+        const priceInfo = item.originalPrice ? ` (Was ${formatPrice(item.originalPrice)} / -${item.discountPercent}%)` : "";
+        return `${index + 1}. *${item.name}*\n   ${colorText}${sizeText}\n   Qty: ${item.quantity} x ${formatPrice(item.price)}${priceInfo} = ৳${(parseFloat(item.price) * item.quantity).toFixed(2)}`;
       })
       .join("\n\n");
     const deliveryText = formData.deliveryArea === "inside" ? "Inside Dhaka (৳70)" : "Outside Dhaka (৳130)";
@@ -108,25 +111,54 @@ export default function CartSidebar() {
                       <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-400 dark:text-zinc-600">No Img</div>
                     )}
                   </div>
-                  <div className="flex-grow flex flex-col justify-between">
+                  <div className="flex-grow flex flex-col justify-between min-w-0">
                     <div>
-                      <h3 className="text-sm font-bold tracking-tight text-gray-900 dark:text-zinc-100 leading-snug">{item.name}</h3>
+                      <h3 className="text-sm font-bold tracking-tight text-gray-900 dark:text-zinc-100 leading-snug pr-1">{item.name}</h3>
                       <p className="text-[10px] text-gray-400 dark:text-zinc-500 mt-1 tracking-wide uppercase">
                         {item.color && <span>{item.color}</span>}
                         {item.color && item.size && <span className="mx-1">·</span>}
                         {item.size && <span>{item.size}</span>}
                       </p>
+                      <div className="mt-1.5">
+                        <PriceDisplay price={item.price} originalPrice={item.originalPrice} discountPercent={item.discountPercent} size="sm" />
+                      </div>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-[11px] font-medium text-gray-500 dark:text-zinc-400 tracking-wide">Qty: {item.quantity}</span>
-                      <span className="text-sm font-bold tracking-tight text-gray-900 dark:text-zinc-100">
-                        ৳{(parseFloat(item.price) * item.quantity).toFixed(2)}
-                      </span>
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="flex items-center border border-gray-200 dark:border-zinc-700 rounded-sm">
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity - 1, item.color, item.size)}
+                          className="w-7 h-7 flex items-center justify-center text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors duration-200 text-sm leading-none"
+                        >
+                          −
+                        </button>
+                        <span className="w-8 h-7 flex items-center justify-center text-[12px] font-semibold text-gray-900 dark:text-zinc-100 border-x border-gray-200 dark:border-zinc-700 select-none">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity + 1, item.color, item.size)}
+                          className="w-7 h-7 flex items-center justify-center text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors duration-200 text-sm leading-none"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold tracking-tight text-gray-900 dark:text-zinc-100">
+                          ৳{(parseFloat(item.price) * item.quantity).toFixed(2)}
+                        </span>
+                        <button
+                          onClick={() => removeFromCart(item.id, item.color, item.size)}
+                          className="text-gray-300 dark:text-zinc-600 hover:text-red-500 transition-colors duration-300 text-sm leading-none"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            <line x1="10" y1="11" x2="10" y2="17" />
+                            <line x1="14" y1="11" x2="14" y2="17" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <button onClick={() => removeFromCart(item.id, item.color, item.size)} className="text-gray-300 dark:text-zinc-600 hover:text-red-500 transition-colors duration-300 self-start text-sm">
-                    ✕
-                  </button>
                 </div>
               ))}
             </div>

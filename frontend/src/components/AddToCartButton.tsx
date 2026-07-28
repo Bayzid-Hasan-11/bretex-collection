@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import { trackAddToCart } from "@/lib/meta-pixel";
+import PriceDisplay from "@/components/PriceDisplay";
 
 export default function AddToCartButton({ product }: { product: any }) {
   const { addToCart } = useCart();
@@ -72,9 +73,7 @@ export default function AddToCartButton({ product }: { product: any }) {
           <h1 className="text-3xl md:text-4xl font-black tracking-tighter text-gray-900 dark:text-zinc-50 mb-3 leading-tight">
             {product.name}
           </h1>
-          <span className="text-2xl md:text-3xl font-light tracking-tight text-gray-500 dark:text-zinc-400">
-            ৳{product.price}
-          </span>
+          <PriceDisplay price={product.price} originalPrice={product.originalPrice} discountPercent={product.discountPercent} size="lg" />
         </div>
 
         {colors.length > 0 && (

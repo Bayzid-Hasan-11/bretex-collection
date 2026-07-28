@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/react";
 import { CartProvider } from "@/context/CartContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import Navbar from "@/components/Navbar";
@@ -47,6 +48,7 @@ export default function RootLayout({
             fbq('track', 'PageView');
           `}
         </Script>
+        <Analytics />
         <ThemeProvider>
           <CartProvider>
             <Navbar />

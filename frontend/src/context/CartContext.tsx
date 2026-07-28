@@ -10,6 +10,8 @@ export interface Product {
   color: string | null;
   size: string | null;
   price: string;
+  originalPrice?: string;
+  discountPercent?: number;
   stock: number;
   is_active: boolean;
   image_url: string | null;
@@ -26,6 +28,7 @@ interface CartContextType {
   setIsCartOpen: (isOpen: boolean) => void;
   addToCart: (product: Product) => void;
   removeFromCart: (productId: number, color?: string | null, size?: string | null) => void;
+  updateQuantity: (productId: number, quantity: number, color?: string | null, size?: string | null) => void;
   cartTotal: number;
   clearCart: () => void;
 
@@ -81,6 +84,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const updateQuantity = (productId: number, quantity: number, color?: string | null, size?: string | null) => {
+    if (quantity <= 0) {
+      removeFromCart(productId, color, size);
+      return;
+    }
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.id === productId &&
+        item.color === (color ?? item.color) &&
+        item.size === (size ?? item.size)
+          ? { ...item, quantity }
+          : item,
+      ),
+    );
+  };
+
   const clearCart = () => setCart([]);
   const cartTotal = cart.reduce(
     (total, item) => total + parseFloat(item.price) * item.quantity,
@@ -114,6 +133,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setIsCartOpen,
         addToCart,
         removeFromCart,
+        updateQuantity,
         cartTotal,
         clearCart,
         wishlist,
